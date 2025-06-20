@@ -1,0 +1,5 @@
+PySide6-Fluent-Widgets[full]
+beautifulsoup4
+mysql-connector-python
+requests
+sqlalchemy
