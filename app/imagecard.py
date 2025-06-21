@@ -52,7 +52,7 @@ class ImageCard(ElevatedCardWidget):
         self.image_label.setFixedSize(160,200)
         self.image_label.setScaledContents(True)
         
-        separator = QFrame()
+        separator = QFrame(self)
         separator.setFrameShape(QFrame.HLine)
         separator.setLineWidth(1)
         separator.setStyleSheet("color: #e0e0e0;")

@@ -203,7 +203,7 @@ class SubSearchPage(QWidget):
         for i, image_data in enumerate(images):
             row = i // 5
             col = i % 5
-            card = ImageCard(image_data, self.imgtype)
+            card = ImageCard(image_data, self.imgtype, self.scroll_content)
             main_window = self.window()  # 获取最顶层的窗口
             if self.imgtype == 1:
                 card.clicked.connect(main_window.show_image_detail_role)
