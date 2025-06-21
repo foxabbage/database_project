@@ -1,4 +1,5 @@
 import sys
+import io
 from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout)
 from PySide6.QtCore import Qt, Signal, QPoint, QSize, QObject, QThread
 from PySide6.QtGui import QPixmap, QIntValidator, QIcon
@@ -257,6 +258,7 @@ class MainWindow(FluentWindow):
 
 
 if __name__ == "__main__":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
