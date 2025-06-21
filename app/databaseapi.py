@@ -898,9 +898,31 @@ class DatabaseAPI:
                 if not role_ids:
                     return []
                 
+                # 获取该角色关联的所有标签ID，用于后续更新标签数量
+                tag_query = text("""
+                    SELECT DISTINCT t.tag_id
+                    FROM RoleTag t
+                    JOIN RoleTagRelation rtr ON t.tag_id = rtr.tag_id
+                    WHERE rtr.role_id = :role_id
+                """)
+                tag_ids = [row[0] for row in session.execute(tag_query, {"role_id": id}).fetchall()]
+                
                 # 删除角色及其关联数据
                 delete_role = text("DELETE FROM Role WHERE role_id = :role_id")
                 session.execute(delete_role, {"role_id": id})
+                
+                # 更新相关标签的数量
+                if tag_ids:
+                    update_tag_query = text("""
+                        UPDATE RoleTag t
+                        SET t.num = (
+                            SELECT COUNT(*) 
+                            FROM RoleTagRelation rtr 
+                            WHERE rtr.tag_id = t.tag_id
+                        )
+                        WHERE t.tag_id IN :tag_ids
+                    """)
+                    session.execute(update_tag_query, {"tag_ids": tuple(tag_ids)})
                 
                 session.commit()
                 return role_ids
@@ -915,9 +937,31 @@ class DatabaseAPI:
                 """)
                 role_ids = [row[0] for row in session.execute(role_query, {"source_id": id}).fetchall()]
                 
+                # 获取该作品关联的所有标签ID，用于后续更新标签数量
+                tag_query = text("""
+                    SELECT DISTINCT t.tag_id
+                    FROM SourceTag t
+                    JOIN SourceTagRelation str ON t.tag_id = str.tag_id
+                    WHERE str.source_id = :source_id
+                """)
+                tag_ids = [row[0] for row in session.execute(tag_query, {"source_id": id}).fetchall()]
+                
                 # 删除作品及其关联数据
                 delete_source = text("DELETE FROM Source WHERE source_id = :source_id")
                 session.execute(delete_source, {"source_id": id})
+                
+                # 更新相关标签的数量
+                if tag_ids:
+                    update_tag_query = text("""
+                        UPDATE SourceTag t
+                        SET t.num = (
+                            SELECT COUNT(*) 
+                            FROM SourceTagRelation str 
+                            WHERE str.tag_id = t.tag_id
+                        )
+                        WHERE t.tag_id IN :tag_ids
+                    """)
+                    session.execute(update_tag_query, {"tag_ids": tuple(tag_ids)})
                 
                 session.commit()
                 return role_ids
