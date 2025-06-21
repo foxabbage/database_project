@@ -55,37 +55,45 @@ def add_single_source(urls, DB_CONFIG):
                     print("Source exists with ID:", source_id)  # Debug print
                 else:
                     summary_div = source_soup.find('div', id='subject_summary', class_='subject_summary')
-                    description = summary_div.get_text(separator='\n', strip=True)
-                    print(description) # test
+                    if summary_div:
+                        description = summary_div.get_text(separator='\n', strip=True)
+                        print(description) # test
+                    else:
+                        description = "暂无简介"
 
 
                     
                     # 先找到 <span> 标签
-                    span_tag = source_soup.find("span", class_="tip", string=re.compile(r"导演: "))  
+                    span_tag = source_soup.find("span", class_="tip", string=re.compile(r"导演: ")) 
+                    if span_tag: 
 
-                    # 取 <span> 标签的下一个 <a> 标签的文本
-                    author = span_tag.find_next("a").text.strip() 
-                    print(author) # test
+                        # 取 <span> 标签的下一个 <a> 标签的文本
+                        author = span_tag.find_next("a").text.strip() 
+                        print(author) # test
 
-                    span_tag = source_soup.find("span", class_="tip", string="动画制作: ")  
+                        span_tag = source_soup.find("span", class_="tip", string="动画制作: ")  
 
-                    # 取 <span> 标签的下一个 <a> 标签的文本
-                    studio = span_tag.find_next("a").text.strip() 
-                    print(studio) # test
+                        # 取 <span> 标签的下一个 <a> 标签的文本
+                        studio = span_tag.find_next("a").text.strip() 
+                        print(studio) # test
 
-                    tip_span = source_soup.find('span', class_='tip', string='放送开始: ')
-                    if tip_span:
-                        # 获取后面的日期文本，去除引号和可能的空白
-                        date_text = tip_span.next_sibling.strip().strip('"')
+                        tip_span = source_soup.find('span', class_='tip', string='放送开始: ')
+                        if tip_span:
+                            # 获取后面的日期文本，去除引号和可能的空白
+                            date_text = tip_span.next_sibling.strip().strip('"')
+                        else:
+                            raise ValueError("未找到‘放送开始：’对应的标签")
+
+                        # 2. 转换日期格式为 MySQL 的 DATE 类型可接受的格式（YYYY-MM-DD）
+                        # 将“2023年9月29日”转换为 datetime 对象
+                        date_obj = datetime.strptime(date_text, '%Y年%m月%d日')
+                        # 格式化为 MySQL DATE 类型要求的字符串形式
+                        release_date = date_obj.strftime('%Y-%m-%d')
+                        print(release_date)
                     else:
-                        raise ValueError("未找到‘放送开始：’对应的标签")
-
-                    # 2. 转换日期格式为 MySQL 的 DATE 类型可接受的格式（YYYY-MM-DD）
-                    # 将“2023年9月29日”转换为 datetime 对象
-                    date_obj = datetime.strptime(date_text, '%Y年%m月%d日')
-                    # 格式化为 MySQL DATE 类型要求的字符串形式
-                    release_date = date_obj.strftime('%Y-%m-%d')
-                    print(release_date)
+                        author = None
+                        studio = None
+                        release_date = None
 
                     # 插入Source表数据
                     source_sql = """
@@ -256,13 +264,17 @@ def add_single_source(urls, DB_CONFIG):
                                         print(f"Error: {e}")
 
                             # 创建角色和作品的关联
-                            try:
+                            cursor.execute("""
+                                    SELECT COUNT(*) FROM RoleSourceRelation 
+                                    WHERE role_id = %s AND source_id = %s
+                                """, (role_id, source_id))
+                            if cursor.fetchone()[0] == 0:
                                 cursor.execute("""
                                     INSERT INTO RoleSourceRelation (role_id, source_id)
                                     VALUES (%s, %s)
                                 """, (role_id, source_id))  
-                            except Exception as e:
-                                print(f"already exist relation: {e}")
+                            else:
+                                print(f"角色 {character} 和来源 {name} 的关联已存在")
 
                             
 

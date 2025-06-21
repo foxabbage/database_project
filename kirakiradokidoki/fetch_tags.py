@@ -11,6 +11,24 @@ from urllib.parse import quote
 import time
 import random
 
+def remove_brackets(text):
+    """
+    去除字符串中的中文或英文括号及其中的内容
+    
+    参数:
+        text (str): 要处理的字符串
+        
+    返回:
+        str: 处理后的字符串
+    """
+    # 匹配中文括号（）及其内容
+    text = re.sub(r'（[^）]*）', '', text)
+    # 匹配英文括号()及其内容
+    text = re.sub(r'\([^)]*\)', '', text)
+    # 去除处理后的字符串中可能多余的空格
+    text = ' '.join(text.split())
+    return text
+
 def fetch_tags(character_name):
     """从萌娘百科获取角色标签"""
     encoded_name = quote(character_name)
@@ -51,7 +69,11 @@ def fetch_tags(character_name):
                 
             # 提取所有萌点链接
             for a in content_td.find_all('a'):
-                moe_points.append(a.get('title'))
+                text = a.get('title')
+                if text is not None:
+                    text = remove_brackets(text)
+                    if text is not None and text.strip() != '':
+                        moe_points.append(text)
                 
             # 处理文本中的萌点（如果有用顿号分隔的文本）
             text = content_td.get_text('、', strip=True)
