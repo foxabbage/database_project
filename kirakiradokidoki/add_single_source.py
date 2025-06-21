@@ -48,6 +48,7 @@ def add_single_source(urls, DB_CONFIG):
 
                 cursor.execute("SELECT source_id FROM Source WHERE name = %s", (name,))
                 existing_source = cursor.fetchone()
+                main_characters, cover_url = add_main_character_name.getCoverAndMainCharacterName('/subject/' + url)
 
                 if existing_source:
                     source_id = existing_source[0]
@@ -170,6 +171,7 @@ def add_single_source(urls, DB_CONFIG):
                                 print(f"关系已存在: source_id={source_id}, link_id={link_id}")
 
                     # 保存封面图片信息
+                    print("Cover URL:", cover_url)  # Debug print
                     if cover_url:
                         cursor.execute("""
                             INSERT INTO SourceImage (
@@ -178,9 +180,7 @@ def add_single_source(urls, DB_CONFIG):
                         """, (cover_url, source_id))
 
                 # 获取并处理角色数据
-                main_characters, cover_url = add_main_character_name.getCoverAndMainCharacterName('/subject/' + url)
                 print("Main characters:", main_characters)  # Debug print
-                print("Cover URL:", cover_url)  # Debug print
                 
                 # 处理角色数据
                 if main_characters:
