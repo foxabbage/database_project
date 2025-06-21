@@ -60,7 +60,7 @@
 ### 系统要求
 
 - windows 10+
-- Python 3.13+
+- Python 3.11+
 - MySQL 8.0+
 
 ### 初始化步骤

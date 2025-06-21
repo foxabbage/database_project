@@ -504,6 +504,12 @@ class DetailTab(QWidget):
             release_date = self.details.get('release_date', '未知')
             release_date = release_date.strftime('%Y-%m-%d') if release_date else '未知'
             status = self.details.get('status', '未知')
+            if status == 'ongoing':
+                status = '连载中'
+            elif status == 'ended':
+                status = '完结'
+            elif status == 'not_released':
+                status = '未上映'
             description = self.details.get('description', '暂无简介')
 
             # 创建HTML内容
@@ -609,14 +615,28 @@ class DetailTab(QWidget):
                 # 第四行是状态
                 status_td = table_rows[3].find_all('td')
                 if len(status_td) >= 2:
-                    self.details['status'] = status_td[1].get_text(strip=True)
+                    temp = self.details['status']
+                    status_text = status_td[1].get_text(strip=True)
+                    if status_text == '放送中' or status_text == '连载中' or status_text == '放送' or status_text == '连载' or status_text == 'ongoing':
+                        self.details['status'] = 'ongoing'
+                    elif status_text == '完结' or status_text == '已完结' or status_text == 'ended':
+                        self.details['status'] = 'ended'
+                    elif status_text == '未放送' or status_text == '未上映' or status_text == '未发布' or status_text == 'not_released':
+                        self.details['status'] = 'not_released'
+                    else:
+                        self.createStatusInputErrorInfoBar()
+                        bd_try_flag = 1
+                        self.details['status'] = temp
         
         # 提取描述（hr标签后的第一个p标签）
         hr_tag = soup.find('hr')
         if hr_tag:
-            next_p = hr_tag.find_next('p')
-            if next_p:
-                self.details['description'] = next_p.get_text(strip=True)
+            p_tags = hr_tag.find_all_next('p')
+            if p_tags:
+                # 提取每个<p>标签的内容并用<br>连接
+                self.details['description'] = '<br>'.join(p.decode_contents() for p in p_tags)
+            else:
+                self.details['description'] = ''
         
         # 保存到数据库
         if bd_try_flag == 1:
@@ -653,7 +673,18 @@ class DetailTab(QWidget):
     def createDayErrorInfoBar(self):
         InfoBar.error(
             title='Error',
-            content="please input date like mm-dd, and year like yyyy-mm-dd",
+            content="please input birthday like mm-dd, and release date like yyyy-mm-dd",
+            orient=Qt.Horizontal,
+            isClosable=True,
+            position=InfoBarPosition.BOTTOM_RIGHT,
+            duration=-1,    # won't disappear automatically
+            parent=self
+        )
+    
+    def createStatusInputErrorInfoBar(self):
+        InfoBar.error(
+            title='Error',
+            content="please input status like 未发布、连载、完结",
             orient=Qt.Horizontal,
             isClosable=True,
             position=InfoBarPosition.BOTTOM_RIGHT,
