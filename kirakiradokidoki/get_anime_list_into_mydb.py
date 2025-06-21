@@ -78,6 +78,7 @@ def fetch_image_src(character_name):
         try:
             response = requests.get(url, headers=headers)
             if response.status_code == 200:
+                response.encoding = 'utf-8'
                 break
             elif response.status_code == 429:
                 print("Too many requests. Retrying...")

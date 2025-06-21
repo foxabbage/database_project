@@ -4,9 +4,7 @@ import random, os
 import requests
 from urllib.parse import quote
 import re
-
 from bs4 import BeautifulSoup
-import requests
 from urllib.parse import quote
 import time
 import random
@@ -51,6 +49,7 @@ def fetch_tags(character_name):
                 return None
             time.sleep(2 ** i)
     
+    response.encoding = 'utf-8'
     soup = BeautifulSoup(response.text, 'html.parser')
     moe_points = []
     

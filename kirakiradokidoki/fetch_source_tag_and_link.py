@@ -25,6 +25,7 @@ def fetch_source_tag_and_link(url):
         try:
             response = requests.get(url, headers=headers)
             if response.status_code == 200:
+                response.encoding = 'utf-8'
                 break
             elif response.status_code == 429:
                 print("Too many requests. Retrying...")

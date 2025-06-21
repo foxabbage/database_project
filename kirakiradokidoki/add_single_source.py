@@ -7,9 +7,6 @@ from datetime import datetime
 import kirakiradokidoki.get_anime_list_into_mydb as get_anime_list_into_mydb
 import kirakiradokidoki.fetch_source_tag_and_link as fetch_source_tag_and_link
 
-
-
-
 def add_single_source(urls, DB_CONFIG):
     # 创建数据库连接
     connection = get_anime_list_into_mydb.create_database_connection(DB_CONFIG)
