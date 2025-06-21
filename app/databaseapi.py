@@ -5,7 +5,6 @@ import os
 from typing import Any, Optional
 from sqlalchemy.engine import Result
 
-CONN = "mysql+pymysql://root:yyh2005@localhost/anime"
 # 模拟数据库接口
 class DatabaseAPI:
     _engine = None

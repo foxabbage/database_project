@@ -8,6 +8,7 @@ from qfluentwidgets import (NavigationInterface, NavigationItemPosition, FluentW
 from qfluentwidgets import FluentIcon as FIF
 from init import load_db_config
 DB_CONFIG = load_db_config()
+DB_CONFIG['database'] = 'anime'
 from app.databaseapi import DatabaseAPI
 DatabaseAPI.initialize(f"mysql+pymysql://{DB_CONFIG['user']}:{DB_CONFIG['password']}@localhost/anime")
 from app.detailpage import DetailPage
@@ -34,7 +35,7 @@ class AddSourceWorker(QObject):
             if not self._is_running:
                 return
                 
-            result = add_single_source(self.li)
+            result = add_single_source(self.li, DB_CONFIG)
             
             if not self._is_running:
                 return

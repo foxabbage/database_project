@@ -53,12 +53,6 @@ def askURL(url):
     return html
 
 # 数据库配置
-DB_CONFIG = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': 'yyh2005',
-    'database': 'anime'
-}
 
 # 网站ID常量
 WEBSITE_BANGUMI = 1
@@ -246,7 +240,7 @@ def getYearData(year, baseurl, search_page_num):
         datalist += getPageData(url)
     return datalist
     
-def create_database_connection():
+def create_database_connection(DB_CONFIG):
     try:
         connection = mysql.connector.connect(**DB_CONFIG)
         if connection.is_connected():
@@ -790,7 +784,7 @@ def test_getPageData():
             print(f"data[{i}]:", data)
     return datalist
 
-def main():
+def main(DB_CONFIG):
     search_page_num = 1 #1页24个内容
     start_year=2020
     end_year=2023
@@ -798,7 +792,7 @@ def main():
     baseurl = 'https://bgm.tv/anime/browser/tv/airtime/{}?sort=rank&page={}'
     
     # 创建数据库连接
-    connection = create_database_connection()
+    connection = create_database_connection(DB_CONFIG)
     if not connection:
         print("Failed to connect to database. Exiting...")
         return
@@ -818,10 +812,10 @@ def main():
         if connection.is_connected():
             connection.close()
             print("Database connection closed")
-
+"""
 if __name__ == "__main__":  
     test_data = test_getPageData()  # 先测试数据结构
     main()
-    print("爬取完毕！")
+    print("爬取完毕！")"""
 
 # print(get_character_info('神尾观铃', f"https://bgm.tv/subject/234"))
