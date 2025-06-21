@@ -18,9 +18,9 @@ class ImageLoader(QObject):
         """加载图片（自动处理缓存）"""
         if not url.startswith(('http://', 'https://')):
             if url.startswith('//'):
-                url = 'http:' + url
+                url = 'https:' + url
             else:
-                url = 'http://' + url
+                url = 'https://' + url
         
         self.url=url
         # 先检查缓存
