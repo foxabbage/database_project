@@ -69,11 +69,9 @@ def fetch_tags(character_name):
                 
             # 提取所有萌点链接
             for a in content_td.find_all('a'):
-                text = a.get('title')
-                if text is not None:
-                    text = remove_brackets(text)
-                    if text is not None and text.strip() != '':
-                        moe_points.append(text)
+                atext = a.get('title')
+                if atext:
+                    moe_points.append(atext)
                 
             # 处理文本中的萌点（如果有用顿号分隔的文本）
             text = content_td.get_text('、', strip=True)
@@ -105,7 +103,12 @@ def fetch_tags(character_name):
         moe_points.extend(points)
     
     # 去重
-    moe_points = list(set(moe_points))
+    moe_points0 = list(set(moe_points))
+    moe_points = []
+    for t in moe_points0:
+        t = remove_brackets(t)
+        if t:
+            moe_points.append(t)
     
     return moe_points if moe_points else None
     
