@@ -11,7 +11,7 @@ from init import load_db_config
 DB_CONFIG = load_db_config()
 DB_CONFIG['database'] = 'anime'
 from app.databaseapi import DatabaseAPI
-DatabaseAPI.initialize(f"mysql+pymysql://{DB_CONFIG['user']}:{DB_CONFIG['password']}@localhost/anime")
+DatabaseAPI.initialize(f"mysql+mysqlconnector://{DB_CONFIG['user']}:{DB_CONFIG['password']}@localhost/anime")
 from app.detailpage import DetailPage
 from app.searchpage import SearchPage
 from app.tagpage import TagPage
