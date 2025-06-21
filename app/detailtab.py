@@ -224,8 +224,9 @@ class DetailTab(QWidget):
 
         # 可滚动的区域（占满剩余空间）
         self.scroll_area = SmoothScrollArea(self)
+        self.scroll_area.setStyleSheet("background: transparent; border: none;")
         self.scroll_area.setWidgetResizable(True)
-        self.scroll_area.enableTransparentBackground()
+        #self.scroll_area.enableTransparentBackground()
         self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.scroll_area.setAttribute(Qt.WA_StyledBackground)
 

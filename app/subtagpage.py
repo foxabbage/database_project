@@ -104,6 +104,7 @@ class SubTagPage(QWidget):
         
         # 滚动区域
         self.scroll_area = SmoothScrollArea(self)
+        self.scroll_area.setStyleSheet("background: transparent; border: none;")
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         

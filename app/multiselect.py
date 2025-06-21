@@ -37,6 +37,7 @@ class MultiSelectWidget(QWidget):
 
         # 可滚动区域
         self.scroll_area = SmoothScrollArea()
+        self.scroll_area.setStyleSheet("background: transparent; border: none;")
         self.scroll_widget = QWidget()
         self.scroll_layout = QVBoxLayout(self.scroll_widget)
 

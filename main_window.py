@@ -61,12 +61,12 @@ class MainWindow(FluentWindow):
 
         self.setFixedSize(1280, 800)
         self.setWindowFlags(Qt.MSWindowsFixedSizeDialogHint)
-        self.setWindowIcon(QIcon(':/qfluentwidgets/images/logo.png'))
+        self.setWindowIcon(QIcon('./resources/icon.jpg'))
         self.setWindowTitle('KiraKira DokiDoki!!')
 
         # create splash screen
         self.splashScreen = SplashScreen(self.windowIcon(), self)
-        self.splashScreen.setIconSize(QSize(106, 106))
+        self.splashScreen.setIconSize(QSize(300, 300))
         self.splashScreen.raise_()
         self.splashScreen.show()
 
