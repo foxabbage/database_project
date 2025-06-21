@@ -61,7 +61,7 @@ def create_database_and_tables(connection):
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS spider (
                 spider_id INT PRIMARY KEY AUTO_INCREMENT,
-                website_id INT NOT NULL,
+                website_id INT NOT NULL DEFAULT 1,
                 name CHAR(20) NOT NULL UNIQUE,
                 download_to_local BOOLEAN DEFAULT FALSE,
                 request_id_para TEXT,
