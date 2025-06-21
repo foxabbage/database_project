@@ -59,7 +59,7 @@ class MainWindow(FluentWindow):
     def __init__(self):
         super().__init__()
 
-        setTheme(Theme.AUTO)
+        setTheme(Theme.LIGHT)
         self.setFixedSize(1280, 800)
         self.setWindowFlags(Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowIcon(QIcon('./resources/icon.jpg'))
