@@ -59,6 +59,7 @@ class MainWindow(FluentWindow):
     def __init__(self):
         super().__init__()
 
+        setTheme(Theme.AUTO)
         self.setFixedSize(1280, 800)
         self.setWindowFlags(Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowIcon(QIcon('./resources/icon.jpg'))
@@ -76,9 +77,8 @@ class MainWindow(FluentWindow):
         self.show()
         QApplication.processEvents()
         
-        # 设置主题
+        # 初始化
         self.active_workers = {}
-        setTheme(Theme.LIGHT)
         DatabaseAPI.delete_extired_spider()
         
         # 创建页面
@@ -258,7 +258,6 @@ class MainWindow(FluentWindow):
 
 
 if __name__ == "__main__":
-    sys.argv += ['-platform', 'windows:darkmode=0']
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()

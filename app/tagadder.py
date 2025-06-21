@@ -60,6 +60,7 @@ class TagAdder(QWidget):
 
         # 创建滚动区域
         self.scrollArea = SmoothScrollArea()
+        self.scrollArea.setStyleSheet("background: transparent; border: none;")
         self.scrollArea.setWidgetResizable(True)
 
         # 设置滚动区域的内容

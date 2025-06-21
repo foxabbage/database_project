@@ -35,6 +35,7 @@ class SmoothScrollPix(SmoothScrollArea):
 
         self.setStyleSheet("""
             QScrollArea {
+            background: transparent;
             border: none;
             }
         """)

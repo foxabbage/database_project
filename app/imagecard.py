@@ -4,7 +4,7 @@ from PySide6.QtGui import QPixmap, QAction
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QApplication, QFrame)
 from qfluentwidgets import (BodyLabel, ImageLabel, 
                           IndeterminateProgressRing,
-                          ElevatedCardWidget, SmoothScrollArea, 
+                          ElevatedCardWidget, SmoothScrollArea, isDarkTheme, 
                           RoundMenu, Action, MenuAnimationType, MenuItemDelegate, CheckableMenu, MenuIndicatorType)
 from qfluentwidgets import FluentIcon as FIF
 from .imageloader import ImageLoader
@@ -21,27 +21,30 @@ class ImageCard(ElevatedCardWidget):
         
         #self.setFixedSize(180, 220)
         self.setMinimumWidth(200)
-        self.setStyleSheet("""
-            #imageCard {
-                background: rgba(255, 255, 255, 0.85);  /* 初始半透明白 */
-                border: 1px solid rgba(0, 0, 0, 0.08);
-                border-radius: 8px;
-                transition: background 200ms ease-out, border 200ms ease-out;  /* 添加CSS过渡 */
-            }
-            #imageCard:hover {
-                background: rgba(220, 220, 220, 0.6);  /* 透明灰 */
-                border: 1px solid rgba(0, 0, 0, 0.15);
-            }
-            
-            /* 确保文字清晰 */
-            QLabel {
-                background: transparent;
-                font-family: "Segoe UI", "Microsoft YaHei";
-            }
-            #titleLabel {
-                font-weight: 500;  /* 中等粗细避免模糊 */
-            }
-        """)
+        if isDarkTheme():
+            self.setStyleSheet("""
+                /* 确保文字清晰 */
+                QLabel {
+                    color: white;
+                    background: transparent;
+                    font-family: "Segoe UI", "Microsoft YaHei";
+                }
+                #titleLabel {
+                    font-weight: 500;  /* 中等粗细避免模糊 */
+                }
+            """)
+        else:
+            self.setStyleSheet("""
+                /* 确保文字清晰 */
+                QLabel {
+                    color: black;
+                    background: transparent;
+                    font-family: "Segoe UI", "Microsoft YaHei";
+                }
+                #titleLabel {
+                    font-weight: 500;  /* 中等粗细避免模糊 */
+                }
+            """)
   
         layout = QVBoxLayout(self)
         layout.setContentsMargins(8, 8, 8, 8)
