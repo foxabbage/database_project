@@ -472,7 +472,6 @@ class DetailTab(QWidget):
                 gender = '女'
             else:
                 gender = '未知'
-            age = self.details.get('age', 'unknown')
             birthday = self.details.get('birthday', '未知')
             birthday = birthday.strftime('%m-%d') if birthday else '未知'
             voice_actor = self.details.get('voice_actor', '未知')
@@ -484,10 +483,6 @@ class DetailTab(QWidget):
                 <tr>
                     <td style="width: 30%; padding: 5px; font-weight: bold;">性别:</td>
                     <td style="padding: 5px;">{gender}</td>
-                </tr>
-                <tr>
-                    <td style="width: 30%; padding: 5px; font-weight: bold;">年龄:</td>
-                    <td style="padding: 5px;">{age}</td>
                 </tr>
                 <tr>
                     <td style="width: 30%; padding: 5px; font-weight: bold;">生日:</td>
@@ -545,7 +540,7 @@ class DetailTab(QWidget):
         if imgtype == 1:
             # 提取表格中的属性值（按顺序）
             table_rows = soup.find_all('tr')
-            if len(table_rows) >= 4:
+            if len(table_rows) >= 3:
                 # 第一行是性别
                 gender_td = table_rows[0].find_all('td')
                 if len(gender_td) >= 2:
@@ -557,20 +552,14 @@ class DetailTab(QWidget):
                     else:
                         self.details['gender'] = 'unknown'
                 
-                # 第二行是年龄
-                age_td = table_rows[1].find_all('td')
-                if len(age_td) >= 2:
-                    self.details['age'] = age_td[1].get_text(strip=True)
-                
-                # 第三行是生日
-                birthday_td = table_rows[2].find_all('td')
+                # 第二行是生日
+                birthday_td = table_rows[1].find_all('td')
                 if len(birthday_td) >= 2:
                     temp = self.details['birthday']
                     try:
                         date_str = birthday_td[1].get_text(strip=True)
                         date_str = date_str.replace(' ', '')
                         if date_str == '未知' or date_str == 'unknown':
-                            print(22222)
                             self.details['birthday'] = None
                         else:
                             match = re.match(r"(\d{1,2})\s*-\s*(\d{1,2})", date_str)
@@ -582,8 +571,8 @@ class DetailTab(QWidget):
                         bd_try_flag = 1
                         self.details['birthday'] = temp
                 
-                # 第四行是声优
-                voice_actor_td = table_rows[3].find_all('td')
+                # 第三行是声优
+                voice_actor_td = table_rows[2].find_all('td')
                 if len(voice_actor_td) >= 2:
                     self.details['voice_actor'] = voice_actor_td[1].get_text(strip=True)
                 
