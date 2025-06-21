@@ -1,7 +1,5 @@
 import sys
 sys.stdout.reconfigure(encoding='utf-8', errors='replace')
-import os
-os.environ['QT_QPA_PLATFORM'] = 'windows:darkmode=0'
 from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout)
 from PySide6.QtCore import Qt, Signal, QPoint, QSize, QObject, QThread
 from PySide6.QtGui import QPixmap, QIntValidator, QIcon
@@ -260,6 +258,7 @@ class MainWindow(FluentWindow):
 
 
 if __name__ == "__main__":
+    sys.argv += ['-platform', 'windows:darkmode=0']
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
