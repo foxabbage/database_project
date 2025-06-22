@@ -115,43 +115,51 @@ class ImageLoader(QObject):
         
     def _handle_response(self, reply):
         """处理网络响应"""
-        # 停止超时计时器
-        self.timeout_timer.stop()
-        
-        # 检查是否是当前活动的reply
-        if reply != self.current_reply:
-            print("[Response] 收到过期回复，忽略处理")
-            reply.deleteLater()
-            return
+        try:
+            # 检查对象是否有效
+            if not hasattr(self, 'timeout_timer') or not self.timeout_timer:
+                reply.deleteLater()
+                return
+            # 停止超时计时器
+            self.timeout_timer.stop()
             
-        # 清除当前reply引用
-        self.current_reply = None
-        
-        if reply.error() != QNetworkReply.NoError:
-            if reply.error() != QNetworkReply.OperationCanceledError:  # 忽略手动取消的错误
-                error_msg = f"图片加载失败: {reply.errorString()}"
+            # 检查是否是当前活动的reply
+            if reply != self.current_reply:
+                print("[Response] 收到过期回复，忽略处理")
+                reply.deleteLater()
+                return
+                
+            # 清除当前reply引用
+            self.current_reply = None
+            
+            if reply.error() != QNetworkReply.NoError:
+                if reply.error() != QNetworkReply.OperationCanceledError:  # 忽略手动取消的错误
+                    error_msg = f"图片加载失败: {reply.errorString()}"
+                    print(f"[Error] {error_msg}")
+                    self.error.emit(error_msg)
+                else:
+                    print("[Cancel] 请求已被手动取消")
+                reply.deleteLater()
+                return
+                
+            # 读取数据
+            data = reply.readAll()
+            
+            # 加载图片
+            pixmap = QPixmap()
+            if pixmap.loadFromData(data):
+                # 存入缓存并发送加载信号
+                QPixmapCache.insert(self.url, pixmap)
+                self.loaded.emit(pixmap)
+            else:
+                error_msg = "错误：加载的图片数据无效"
                 print(f"[Error] {error_msg}")
                 self.error.emit(error_msg)
-            else:
-                print("[Cancel] 请求已被手动取消")
-            reply.deleteLater()
-            return
             
-        # 读取数据
-        data = reply.readAll()
-        
-        # 加载图片
-        pixmap = QPixmap()
-        if pixmap.loadFromData(data):
-            # 存入缓存并发送加载信号
-            QPixmapCache.insert(self.url, pixmap)
-            self.loaded.emit(pixmap)
-        else:
-            error_msg = "错误：加载的图片数据无效"
-            print(f"[Error] {error_msg}")
-            self.error.emit(error_msg)
-        
-        reply.deleteLater()
+            reply.deleteLater()
+        except RuntimeError as e:
+            if "already deleted" in str(e):
+                return
 
     def _handle_timeout(self):
         """处理请求超时"""
@@ -160,3 +168,4 @@ class ImageLoader(QObject):
             self.current_reply.abort()
             self.error.emit(f"错误：图片加载超时({self.timeout_seconds}秒)")
             print("[Timeout] 请求已取消")
+            
