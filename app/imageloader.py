@@ -3,14 +3,31 @@ from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkRe
 from PySide6.QtGui import QPixmap, QPixmapCache
 import weakref
 
+class SharedNetworkManager:
+    """共享网络管理器单例"""
+    _instance = None
+    _manager = None
+    
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._manager = QNetworkAccessManager()
+            # 可以在这里设置全局网络配置
+        return cls._instance
+    
+    @property
+    def manager(self):
+        return self._manager
+
 class ImageLoader(QObject):
-    """网络图片加载器（带详细日志）"""
+    """网络图片加载器（使用共享网络管理器）"""
     loaded = Signal(QPixmap)  # 加载成功信号
     error = Signal(str)       # 加载失败信号
     
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.network_manager = QNetworkAccessManager(self)
+        # 使用共享的网络管理器
+        self.network_manager = SharedNetworkManager().manager
         
         # 设置QPixmapCache缓存大小为100MB (默认是10MB)
         QPixmapCache.setCacheLimit(100 * 1024)  # 参数单位为KB
@@ -68,9 +85,6 @@ class ImageLoader(QObject):
             self.error.emit(reply.errorString())
         
         reply.errorOccurred.connect(on_error)
-        
-        reply = self.network_manager.get(request)
-        self.current_reply = reply
         
         # 添加SSL错误处理
         def on_ssl_errors(errors):
